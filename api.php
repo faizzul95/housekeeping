@@ -8,25 +8,25 @@ use OnlyPHP\Housekeeping\DatabaseArchiver;
 $db = new Database();
 $archiver = new DatabaseArchiver($db->getConnection());
 
-$archiver->logMessage("Starting backup process at :" . date('Y-m-d H:i:s'));
+$archiver->logMessage("Starting backup process at : " . date('Y-m-d H:i:s'));
 $result = $archiver
     ->driver('mysql')
     ->backupFrom('system_queue_job')
     // ->backupTo('system_permission')
     ->primaryKey('id')
     ->uniqueColumns('uuid, type')
-    ->whereClause("DATE(created_at) = '2025-02-09'")
-    ->mode('BO')  // Backup Only
+    ->whereClause("DATE(created_at) <= '2025-02-08'")
+    ->mode('BP')  // Backup Only
     ->chunk(50000)  // Process 50000 records at a time
     ->onDebug()
     // ->allowDuplicate()
     ->run();
-$archiver->logMessage("Ended backup process at :" . date('Y-m-d H:i:s'));
+$archiver->logMessage("Ended backup process at : " . date('Y-m-d H:i:s'));
 
 dd($result);
 
-$action = isset($_POST['action']) ? $_POST['action'] : '';
-$id = isset($_POST['id']) ? $_POST['id'] : '';
+// $action = isset($_POST['action']) ? $_POST['action'] : '';
+// $id = isset($_POST['id']) ? $_POST['id'] : '';
 
 // if ($action == 1) {
 

@@ -5,6 +5,7 @@ namespace OnlyPHP\Housekeeping\Connections;
 use PDO;
 use mysqli;
 use Exception;
+use Throwable;
 use RuntimeException;
 
 class DatabaseAdapter
@@ -34,75 +35,105 @@ class DatabaseAdapter
 
     /**
      * Begin a database transaction
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function beginTransaction()
     {
+        if (!$this->connection) {
+            throw new RuntimeException("Database connection is not initialized.");
+        }
+
         try {
             switch ($this->connectionType) {
                 case 'pdo':
-                    $this->connection->beginTransaction();
+                    if (!$this->connection->inTransaction()) { // Prevent nested transactions
+                        $this->connection->beginTransaction();
+                    }
                     break;
                 case 'mysqli':
                     $this->connection->begin_transaction();
                     break;
                 case 'codeigniter3':
-                    $this->connection->trans_start();
+                    if (method_exists($this->connection, 'trans_start')) {
+                        $this->connection->trans_start();
+                    } else {
+                        throw new RuntimeException("Transaction start not supported.");
+                    }
                     break;
                 default:
                     throw new RuntimeException("Transaction start not supported for this connection type.");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw new RuntimeException("Failed to start transaction: " . $e->getMessage(), 0, $e);
         }
     }
 
     /**
      * Commit a database transaction
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function commit()
     {
+        if (!$this->connection) {
+            throw new RuntimeException("Database connection is not initialized.");
+        }
+
         try {
             switch ($this->connectionType) {
                 case 'pdo':
-                    $this->connection->commit();
+                    if ($this->connection->inTransaction()) {
+                        $this->connection->commit();
+                    }
                     break;
                 case 'mysqli':
                     $this->connection->commit();
                     break;
                 case 'codeigniter3':
-                    $this->connection->trans_complete();
+                    if (method_exists($this->connection, 'trans_complete')) {
+                        $this->connection->trans_complete();
+                    } else {
+                        throw new RuntimeException("Commit not supported.");
+                    }
                     break;
                 default:
                     throw new RuntimeException("Commit not supported for this connection type.");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw new RuntimeException("Failed to commit transaction: " . $e->getMessage(), 0, $e);
         }
     }
 
     /**
      * Roll back a database transaction
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function rollback()
     {
+        if (!$this->connection) {
+            throw new RuntimeException("Database connection is not initialized.");
+        }
+
         try {
             switch ($this->connectionType) {
                 case 'pdo':
-                    $this->connection->rollBack();
+                    if ($this->connection->inTransaction()) {
+                        $this->connection->rollBack();
+                    }
                     break;
                 case 'mysqli':
                     $this->connection->rollback();
                     break;
                 case 'codeigniter3':
-                    $this->connection->trans_rollback();
+                    if (method_exists($this->connection, 'trans_rollback')) {
+                        $this->connection->trans_rollback();
+                    } else {
+                        throw new RuntimeException("Rollback not supported.");
+                    }
                     break;
                 default:
                     throw new RuntimeException("Rollback not supported for this connection type.");
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw new RuntimeException("Failed to rollback transaction: " . $e->getMessage(), 0, $e);
         }
     }
@@ -116,6 +147,10 @@ class DatabaseAdapter
      */
     public function execute($sql, $params = [])
     {
+        if (!$this->connection) {
+            throw new RuntimeException("Database connection is not initialized.");
+        }
+
         try {
             switch ($this->connectionType) {
                 case 'pdo':

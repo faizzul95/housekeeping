@@ -23,7 +23,8 @@ class PurgeOperation
     {
         MemoryManager::checkMemoryUsage($this->config, $this->logger);
 
-        $purgeSql = $this->buildPurgeQuery($idRangeCondition);
+        $uniqueCondition = $this->buildUniqueCondition();
+        $purgeSql = $this->buildPurgeQuery($idRangeCondition, $uniqueCondition);
 
         if ($this->config->isDebug()) {
             $this->logger->log("Running purge query: \n{$purgeSql}", ArchiverConstants::LOG_LEVEL_DEBUG);
@@ -48,10 +49,28 @@ class PurgeOperation
         return $result->rowCount();
     }
 
-    private function buildPurgeQuery($idRangeCondition)
+    private function buildUniqueCondition()
     {
-        return "DELETE FROM {$this->config->getOriginalTable()}
+        // Only apply the unique condition check for BP mode
+        if ($this->config->getMode() !== ArchiverConstants::MODE_BACKUP_PURGE) {
+            return '';
+        }
+
+        $conditions = [];
+        foreach ($this->config->getUniqueColumns() as $column) {
+            $conditions[] = "arc.{$column} = o.{$column}";
+        }
+
+        return ' AND EXISTS (
+            SELECT 1 FROM ' . $this->config->getArchiveTable() . ' arc WHERE ' .
+            implode(' AND ', $conditions) . ')';
+    }
+
+    private function buildPurgeQuery($idRangeCondition, $uniqueCondition)
+    {
+        return "DELETE FROM {$this->config->getOriginalTable()} o
                 WHERE {$idRangeCondition}
-                AND ({$this->config->getWhereClause()})";
+                AND ({$this->config->getWhereClause()})
+                {$uniqueCondition}";
     }
 }

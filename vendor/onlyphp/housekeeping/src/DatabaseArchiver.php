@@ -170,9 +170,9 @@ class DatabaseArchiver
         $result = $stmt ? $stmt->fetch() : null;
 
         $this->config->setPrimaryKeyRange([
-            'min' => (int)$result['min_id'],
-            'max' => (int)$result['max_id'],
-            'count' => (int)$result['total_count']
+            'min' => !empty($result) && isset($result['min_id']) ? (int)$result['min_id'] : 0,
+            'max' => !empty($result) && isset($result['max_id']) ? (int)$result['max_id'] : 0,
+            'count' => !empty($result) && isset($result['total_count']) ? (int)$result['total_count'] : 0
         ]);
     }
 
