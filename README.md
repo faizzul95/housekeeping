@@ -167,7 +167,7 @@ $result = $archiver
 | `backupFrom(string)`          | Set source table name                        |
 | `backupTo(string)`            | Set custom archive table name                |
 | `primaryKey(string)`          | Set primary key column                       |
-| `condition(string)`           | Set WHERE clause for record selection        |
+| `whereClause(string)`         | Set WHERE clause for record selection        |
 | `mode(string)`                | Set operation mode ('BO', 'PO', or 'BP')     |
 | `chunk(int)`                  | Set chunk size (100-50000)                   |
 | `parallel(int)`               | Set number of parallel threads (1-16)        |
