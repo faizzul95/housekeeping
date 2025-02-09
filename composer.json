@@ -1,0 +1,18 @@
+{
+    "name": "onlyphp/housekeeping",
+    "description": "A test project to use the OnlyPHP\\Housekeeping package without installing it.",
+    "type": "project",
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OnlyPHP\\Housekeeping\\": "vendor/OnlyPHP/Housekeeping/src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
