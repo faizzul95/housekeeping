@@ -4,7 +4,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![Total Downloads](https://img.shields.io/packagist/dt/onlyphp/housekeeping.svg)](https://packagist.org/packages/onlyphp/housekeeping)
 
-A powerful and flexible database archiving solution for CodeIgniter 3 applications. This package helps you manage database growth by providing tools to archive and purge data while maintaining data integrity.
+A powerful and flexible database archiving solution for PHP applications. This package helps you manage database growth by providing tools to archive and purge data while maintaining data integrity.
 
 ## ⚠️ Warning
 
@@ -23,7 +23,7 @@ This package is under active development and may contain critical bugs. It is pr
 
 ## 💻 Requirements
 
-- PHP >= 8.0
+- PHP >= 7.4
 - MySQL 5.7+ or Oracle 11g+
 - PHP PCNTL extension (for parallel processing)
 - Composer
@@ -119,10 +119,6 @@ $result = $archiver
     ->parallel(4)  // Use 4 parallel processes
     ->chunk(1000)
     ->run();
-
-// Monitor progress
-$progress = $archiver->getProgress();
-print_r($progress);
 ```
 
 ### Example 4: Oracle Database with Debug Mode
