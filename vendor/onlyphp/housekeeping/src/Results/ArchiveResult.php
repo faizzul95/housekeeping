@@ -3,6 +3,8 @@
 namespace OnlyPHP\Housekeeping\Results;
 
 use OnlyPHP\Housekeeping\Utils\MemoryManager;
+use OnlyPHP\Housekeeping\Utils\Logger;
+use InvalidArgumentException, RuntimeException, Exception;
 
 class ArchiveResult
 {
@@ -49,22 +51,59 @@ class ArchiveResult
         ];
     }
 
-    private static function calculateRuntime($startTime, $endTime)
+    public static function calculateRuntime($startTime, $endTime)
     {
         $runtime = $endTime - $startTime;
         return self::formatRuntime($runtime);
     }
 
-    private static function formatRuntime($seconds)
+    public static function formatRuntime($seconds)
     {
-        $hours = floor($seconds / 3600);
-        $remainderHours = fmod($seconds, 3600);
+        try {
+            // Input validation
+            if (!is_numeric($seconds)) {
+                throw new InvalidArgumentException('Input must be a numeric value');
+            }
 
-        $minutes = floor($remainderHours / 60);
-        $remainderMinutes = fmod($remainderHours, 60);
+            // Ensure we have a positive number
+            $seconds = abs((float) $seconds);
 
-        $seconds = $remainderMinutes;
+            // Calculate days
+            $days = floor($seconds / 86400);  // 86400 = 24 * 60 * 60
+            $remainderDays = fmod($seconds, 86400);
 
-        return sprintf('%02d:%02d:%06.3f', $hours, $minutes, $seconds);
+            // Calculate hours
+            $hours = floor($remainderDays / 3600);
+            $remainderHours = fmod($remainderDays, 3600);
+
+            // Calculate minutes
+            $minutes = floor($remainderHours / 60);
+            $remainderMinutes = fmod($remainderHours, 60);
+
+            // Seconds and milliseconds
+            $seconds = $remainderMinutes;
+
+            // Prevent potential floating point precision issues
+            if ($seconds >= 60) {
+                $seconds = 59.999;
+            }
+
+            // Handle extreme values
+            if ($days > 999999) {
+                throw new RuntimeException('Duration too large to display');
+            }
+
+            // Format the output
+            if ($days > 0) {
+                $formatted = sprintf('%dd %02d:%02d:%06.3f', $days, $hours, $minutes, $seconds);
+            } else {
+                $formatted = sprintf('%02d:%02d:%06.3f', $hours, $minutes, $seconds);
+            }
+
+            return $formatted;
+        } catch (Exception $e) {
+            // throw $e;
+            return '00:00:00.000';
+        }
     }
 }

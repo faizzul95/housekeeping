@@ -15,7 +15,7 @@ class DatabaseAdapter
     private $lastStatement;
 
     /**
-     * @param mixed $connection mysqli|PDO|CI_DB_mysqli_driver
+     * @param mixed $connection mysqli|PDO|CI_DB_mysqli_driver|resource Oracle OCI connection
      * @throws RuntimeException
      */
     public function __construct($connection)
@@ -23,11 +23,28 @@ class DatabaseAdapter
         $this->connection = $connection;
 
         if ($connection instanceof PDO) {
-            $this->connectionType = 'pdo';
+            // Check if it's an OCI PDO connection
+            $driverName = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+            if (in_array($driverName, ['oci', 'oracle'])) {
+                $this->connectionType = 'pdo_oci';
+            } else {
+                $this->connectionType = 'pdo';
+            }
         } elseif ($connection instanceof mysqli) {
-            $this->connectionType = 'mysqli';
-        } elseif (is_object($connection) && property_exists($connection, 'dbdriver') && $connection->dbdriver === 'mysqli') {
-            $this->connectionType = 'codeigniter3';
+            // Check if it's a MariaDB connection
+            if (method_exists($connection, 'get_server_info') && stripos($connection->get_server_info(), 'mariadb') !== false) {
+                $this->connectionType = 'mariadb';
+            } else {
+                $this->connectionType = 'mysqli';
+            }
+        } elseif (is_object($connection) && property_exists($connection, 'dbdriver')) {
+            if ($connection->dbdriver === 'mysqli') {
+                $this->connectionType = 'codeigniter3';
+            } elseif (in_array($connection->dbdriver, ['oci8', 'oracle'])) {
+                $this->connectionType = 'codeigniter3_oci';
+            }
+        } elseif (is_resource($connection) && get_resource_type($connection) === 'oci8 connection') {
+            $this->connectionType = 'oci';
         } else {
             throw new RuntimeException('Unsupported database connection type');
         }
@@ -46,19 +63,28 @@ class DatabaseAdapter
         try {
             switch ($this->connectionType) {
                 case 'pdo':
+                case 'pdo_oci':
                     if (!$this->connection->inTransaction()) { // Prevent nested transactions
                         $this->connection->beginTransaction();
                     }
                     break;
                 case 'mysqli':
+                case 'mariadb':
                     $this->connection->begin_transaction();
                     break;
                 case 'codeigniter3':
+                case 'codeigniter3_oci':
                     if (method_exists($this->connection, 'trans_start')) {
                         $this->connection->trans_start();
                     } else {
                         throw new RuntimeException("Transaction start not supported.");
                     }
+                    break;
+                case 'oci':
+                case 'oracle':
+                case 'oci8':
+                    // OCI auto-commits unless explicitly told not to
+                    // We don't need to do anything here as it begins implicitly
                     break;
                 default:
                     throw new RuntimeException("Transaction start not supported for this connection type.");
@@ -81,18 +107,28 @@ class DatabaseAdapter
         try {
             switch ($this->connectionType) {
                 case 'pdo':
+                case 'pdo_oci':
                     if ($this->connection->inTransaction()) {
                         $this->connection->commit();
                     }
                     break;
                 case 'mysqli':
+                case 'mariadb':
                     $this->connection->commit();
                     break;
                 case 'codeigniter3':
+                case 'codeigniter3_oci':
                     if (method_exists($this->connection, 'trans_complete')) {
                         $this->connection->trans_complete();
                     } else {
                         throw new RuntimeException("Commit not supported.");
+                    }
+                    break;
+                case 'oci':
+                case 'oracle':
+                case 'oci8':
+                    if (function_exists('oci_commit')) {
+                        oci_commit($this->connection);
                     }
                     break;
                 default:
@@ -116,18 +152,28 @@ class DatabaseAdapter
         try {
             switch ($this->connectionType) {
                 case 'pdo':
+                case 'pdo_oci':
                     if ($this->connection->inTransaction()) {
                         $this->connection->rollBack();
                     }
                     break;
                 case 'mysqli':
+                case 'mariadb':
                     $this->connection->rollback();
                     break;
                 case 'codeigniter3':
+                case 'codeigniter3_oci':
                     if (method_exists($this->connection, 'trans_rollback')) {
                         $this->connection->trans_rollback();
                     } else {
                         throw new RuntimeException("Rollback not supported.");
+                    }
+                    break;
+                case 'oci':
+                case 'oracle':
+                case 'oci8':
+                    if (function_exists('oci_rollback')) {
+                        oci_rollback($this->connection);
                     }
                     break;
                 default:
@@ -154,12 +200,14 @@ class DatabaseAdapter
         try {
             switch ($this->connectionType) {
                 case 'pdo':
+                case 'pdo_oci':
                     $stmt = $this->connection->prepare($sql);
                     $stmt->execute($params);
-                    $this->lastStatement = new DatabaseStatement($stmt, 'pdo');
+                    $this->lastStatement = new DatabaseStatement($stmt, $this->connectionType);
                     break;
 
                 case 'mysqli':
+                case 'mariadb':
                     if (!empty($params)) {
                         $stmt = $this->connection->prepare($sql);
                         if ($stmt === false) {
@@ -185,15 +233,42 @@ class DatabaseAdapter
                         throw new RuntimeException("Query execution failed: " . $this->connection->error);
                     }
 
-                    $this->lastStatement = new DatabaseStatement($result, 'mysqli');
+                    $this->lastStatement = new DatabaseStatement($result, $this->connectionType);
                     break;
 
                 case 'codeigniter3':
+                case 'codeigniter3_oci':
                     $query = $this->connection->query($sql, $params);
                     if ($query === false) {
                         throw new RuntimeException("Query execution failed: " . $this->connection->error());
                     }
-                    $this->lastStatement = new DatabaseStatement($query, 'codeigniter3');
+                    $this->lastStatement = new DatabaseStatement($query, $this->connectionType);
+                    break;
+
+                case 'oci':
+                case 'oracle':
+                case 'oci8':
+                    $stmt = oci_parse($this->connection, $sql);
+                    if ($stmt === false) {
+                        throw new RuntimeException("Failed to parse OCI statement");
+                    }
+
+                    // Bind parameters if any
+                    if (!empty($params)) {
+                        foreach ($params as $key => $value) {
+                            $paramName = is_numeric($key) ? ':p' . $key : ':' . $key;
+                            oci_bind_by_name($stmt, $paramName, $params[$key]);
+                        }
+                    }
+
+                    // Execute the statement
+                    $result = oci_execute($stmt, OCI_DEFAULT); // OCI_DEFAULT to support transactions
+                    if (!$result) {
+                        $error = oci_error($stmt);
+                        throw new RuntimeException("OCI query execution failed: " . ($error ? $error['message'] : 'Unknown error'));
+                    }
+
+                    $this->lastStatement = new DatabaseStatement($stmt, 'oci');
                     break;
             }
 

@@ -3379,7 +3379,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `system_queue_job`
 --
 ALTER TABLE `system_queue_job`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1183627;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3220;
 
 --
 -- AUTO_INCREMENT for table `users`

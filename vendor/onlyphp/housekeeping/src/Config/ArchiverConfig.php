@@ -136,7 +136,17 @@ class ArchiverConfig
     // Setters with validation
     public function setDriver($driver)
     {
-        $supportedDrivers = [ArchiverConstants::DRIVER_MYSQL, ArchiverConstants::DRIVER_ORACLE];
+        $supportedDrivers =  [
+            ArchiverConstants::DRIVER_MYSQL,
+            ArchiverConstants::DRIVER_MYSQLI,
+            ArchiverConstants::DRIVER_MARIADB,
+            ArchiverConstants::DRIVER_ORACLE,
+            ArchiverConstants::DRIVER_PDO_MYSQL,
+            ArchiverConstants::DRIVER_PDO_OCI,
+            ArchiverConstants::DRIVER_CODEIGNITER3_MYSQL,
+            ArchiverConstants::DRIVER_CODEIGNITER3_OCI
+        ];
+
         $driver = strtolower($driver);
 
         if (!in_array($driver, $supportedDrivers, true)) {

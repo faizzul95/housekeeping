@@ -16,11 +16,10 @@
         <table id="queueTable" class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>UUID</th>
-                    <th>Attempt</th>
-                    <th>Message</th>
-                    <th>Created At</th>
+                    <th>Date</th>
+                    <th>Count</th>
+                    <th>Table</th>
+                    <th>Action</th>
                 </tr>
             </thead>
         </table>
@@ -39,11 +38,10 @@
                     }
                 },
                 "columns": [
-                    { "data": "id" },
-                    { "data": "uuid" },
-                    { "data": "attempt" },
-                    { "data": "message" },
-                    { "data": "created_at" }
+                    { "data": "date" },
+                    { "data": "count" },
+                    { "data": "table" },
+                    { "data": "action" }
                 ]
             });
         });

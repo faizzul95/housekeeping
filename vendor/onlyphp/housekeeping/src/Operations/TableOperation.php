@@ -41,9 +41,21 @@ class TableOperation
     private function getCreateTableSQL()
     {
         return match ($this->config->getDriver()) {
-            ArchiverConstants::DRIVER_MYSQL => "CREATE TABLE IF NOT EXISTS {$this->config->getArchiveTable()} LIKE {$this->config->getOriginalTable()}",
-            ArchiverConstants::DRIVER_ORACLE => "CREATE TABLE {$this->config->getArchiveTable()} AS SELECT * FROM {$this->config->getOriginalTable()} WHERE 1=2",
-            default => throw new RuntimeException("Unsupported database driver for table creation")
+            // MySQL-based drivers 
+            ArchiverConstants::DRIVER_MYSQL,
+            ArchiverConstants::DRIVER_MYSQLI,
+            ArchiverConstants::DRIVER_MARIADB,
+            ArchiverConstants::DRIVER_PDO_MYSQL,
+            ArchiverConstants::DRIVER_CODEIGNITER3_MYSQL
+            => "CREATE TABLE IF NOT EXISTS {$this->config->getArchiveTable()} AS SELECT * FROM {$this->config->getOriginalTable()} WHERE 1=2",
+
+            // Oracle-based drivers 
+            ArchiverConstants::DRIVER_ORACLE,
+            ArchiverConstants::DRIVER_PDO_OCI,
+            ArchiverConstants::DRIVER_CODEIGNITER3_OCI
+            => "CREATE TABLE {$this->config->getArchiveTable()} AS SELECT * FROM {$this->config->getOriginalTable()} WHERE 1=2",
+
+            default => throw new RuntimeException("Unsupported database driver '{$this->config->getDriver()}' for table creation")
         };
     }
 }

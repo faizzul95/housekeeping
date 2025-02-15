@@ -8,7 +8,7 @@ use OnlyPHP\Housekeeping\Utils\MemoryManager;
 use Exception;
 use RuntimeException;
 
-class BackupOperation
+class BackupDBOperation
 {
     private $config;
     private $logger;
@@ -51,7 +51,7 @@ class BackupOperation
 
     private function buildUniqueCondition()
     {
-        if (!$this->config->isPreventDuplicate()) {
+        if (empty($this->config->getUniqueColumns()) || !$this->config->isPreventDuplicate()) {
             return '';
         }
 

@@ -4,17 +4,19 @@ namespace OnlyPHP\Housekeeping;
 
 use OnlyPHP\Housekeeping\Config\ArchiverConfig;
 use OnlyPHP\Housekeeping\Constants\ArchiverConstants;
-use OnlyPHP\Housekeeping\Operations\BackupOperation;
-use OnlyPHP\Housekeeping\Operations\PurgeOperation;
+use OnlyPHP\Housekeeping\Operations\BackupDBOperation;
+use OnlyPHP\Housekeeping\Operations\PurgeDBOperation;
 use OnlyPHP\Housekeeping\Operations\TableOperation;
 use OnlyPHP\Housekeeping\Results\ArchiveResult;
 use OnlyPHP\Housekeeping\Validators\ConfigurationValidator;
 use OnlyPHP\Housekeeping\Utils\Logger;
+use OnlyPHP\Housekeeping\Utils\PrimaryKeyRangeHandler;
 use OnlyPHP\Housekeeping\Operations\Parallel\ParallelManager;
 use OnlyPHP\Housekeeping\Connections\DatabaseAdapter;
 
 use Exception;
 use RuntimeException;
+use OnlyPHP\Housekeeping\Exceptions\PrimaryKeyRangeException;
 
 class DatabaseArchiver
 {
@@ -28,9 +30,11 @@ class DatabaseArchiver
     {
         $connection = new DatabaseAdapter($conObj);
         $this->config = new ArchiverConfig($connection);
+        $this->driver($connection->getConnectionType());
+
         $this->logger = new Logger($this->config->getLogPath());
-        $this->backupOperation = new BackupOperation($this->config, $this->logger);
-        $this->purgeOperation = new PurgeOperation($this->config, $this->logger);
+        $this->backupOperation = new BackupDBOperation($this->config, $this->logger);
+        $this->purgeOperation = new PurgeDBOperation($this->config, $this->logger);
         $this->tableOperation = new TableOperation($this->config, $this->logger);
     }
 
@@ -156,24 +160,116 @@ class DatabaseArchiver
 
     private function determinePrimaryKeyRange()
     {
-        $sql = "SELECT MIN({$this->config->getPrimaryKey()}) as min_id, 
-                       MAX({$this->config->getPrimaryKey()}) as max_id, 
-                       COUNT(*) as total_count
-                FROM {$this->config->getOriginalTable()}
-                WHERE {$this->config->getWhereClause()}";
+        $startTime = microtime(true);
+        $tableName = $this->config->getOriginalTable();
+        $primaryKey = $this->config->getPrimaryKey();
 
-        if ($this->config->isDebug()) {
-            $this->logMessage("Running range query: \n{$sql}", ArchiverConstants::LOG_LEVEL_DEBUG);
+        try {
+            // Validate basic configuration
+            if (empty($tableName)) {
+                throw PrimaryKeyRangeException::invalidConfiguration("Table name is required");
+            }
+
+            if (empty($primaryKey)) {
+                throw PrimaryKeyRangeException::invalidConfiguration("Primary key column is required");
+            }
+
+            // Initialize range handler
+            $rangeHandler = new PrimaryKeyRangeHandler($this->config, $this->logger);
+
+            // Get the range
+            $range = $rangeHandler->determineRange();
+
+            // Validate range results
+            if ($range['min'] === null || $range['max'] === null) {
+                throw PrimaryKeyRangeException::nullRangeValue($primaryKey);
+            }
+
+            // Handle empty result set
+            if ($range['count'] === 0) {
+                $this->logMessage(
+                    sprintf(
+                        "No records found matching criteria in table '%s' where %s",
+                        $tableName,
+                        $this->config->getWhereClause()
+                    ),
+                    ArchiverConstants::LOG_LEVEL_WARNING
+                );
+            }
+
+            // Set the range in configuration
+            $this->config->setPrimaryKeyRange([
+                'min' => $range['min'],
+                'max' => $range['max'],
+                'count' => $range['count']
+            ]);
+
+            // Log debug information if enabled
+            if ($this->config->isDebug()) {
+                $this->logMessage(
+                    sprintf(
+                        "Primary key range determined for table '%s':\n" .
+                            "- Column: %s\n" .
+                            "- Min: %s\n" .
+                            "- Max: %s\n" .
+                            "- Count: %d\n" .
+                            "- Execution Time: %s",
+                        $tableName,
+                        $primaryKey,
+                        var_export($range['min'], true),
+                        var_export($range['max'], true),
+                        $range['count'],
+                        ArchiveResult::calculateRuntime($startTime, microtime(true))
+                    ),
+                    ArchiverConstants::LOG_LEVEL_DEBUG
+                );
+            }
+
+            // Memory cleanup for large datasets
+            unset($range);
+            if (function_exists('gc_collect_cycles')) {
+                gc_collect_cycles();
+            }
+        } catch (PrimaryKeyRangeException $e) {
+            $this->logMessage(
+                sprintf(
+                    "Failed to determine primary key range for table '%s': %s",
+                    $tableName,
+                    $e->getDetailedMessage()
+                ),
+                ArchiverConstants::LOG_LEVEL_ERROR
+            );
+
+            // Add context to the original exception
+            throw new RuntimeException(
+                sprintf(
+                    "Failed to determine primary key range for table '%s'. %s",
+                    $tableName,
+                    $e->getMessage()
+                ),
+                0,
+                $e
+            );
+        } catch (Exception $e) {
+            $this->logMessage(
+                sprintf(
+                    "Unexpected error while determining primary key range for table '%s': %s",
+                    $tableName,
+                    $e->getMessage()
+                ),
+                ArchiverConstants::LOG_LEVEL_ERROR
+            );
+
+            throw new RuntimeException(
+                sprintf(
+                    "Unexpected error while determining primary key range for table '%s'. %s",
+                    $tableName,
+                    $e->getMessage()
+                ),
+                0,
+                $e
+            );
         }
-
-        $stmt = $this->config->getConnection()->execute($sql);
-        $result = $stmt ? $stmt->fetch() : null;
-
-        $this->config->setPrimaryKeyRange([
-            'min' => !empty($result) && isset($result['min_id']) ? (int)$result['min_id'] : 0,
-            'max' => !empty($result) && isset($result['max_id']) ? (int)$result['max_id'] : 0,
-            'count' => !empty($result) && isset($result['total_count']) ? (int)$result['total_count'] : 0
-        ]);
     }
 
     private function runSequentialArchiving()

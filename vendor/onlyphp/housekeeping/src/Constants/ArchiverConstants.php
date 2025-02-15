@@ -17,7 +17,13 @@ class ArchiverConstants
 
     // Database drivers
     public const DRIVER_MYSQL = 'mysql';
+    public const DRIVER_MYSQLI = 'mysqli';
+    public const DRIVER_MARIADB = 'mariadb';
     public const DRIVER_ORACLE = 'oci';
+    public const DRIVER_PDO_MYSQL = 'pdo';
+    public const DRIVER_PDO_OCI = 'pdo_oci';
+    public const DRIVER_CODEIGNITER3_MYSQL = 'codeigniter3';
+    public const DRIVER_CODEIGNITER3_OCI = 'codeigniter3_oci';
 
     // Default values
     public const DEFAULT_CHUNK_SIZE = 1000;

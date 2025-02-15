@@ -8,57 +8,60 @@ use OnlyPHP\Housekeeping\DatabaseArchiver;
 $db = new Database();
 $archiver = new DatabaseArchiver($db->getConnection());
 
+$testType = 1;
+$chunkSize = 50000;
+
 $archiver->logMessage("Starting backup process at : " . date('Y-m-d H:i:s'));
-$result = $archiver
-    ->driver('mysql')
-    ->backupFrom('system_queue_job')
-    // ->backupTo('system_permission')
-    ->primaryKey('id')
-    ->uniqueColumns('uuid, type')
-    ->whereClause("DATE(created_at) <= '2025-02-08'")
-    ->mode('BP')  // Backup Only
-    ->chunk(50000)  // Process 50000 records at a time
-    ->onDebug()
-    // ->allowDuplicate()
-    ->run();
-$archiver->logMessage("Ended backup process at : " . date('Y-m-d H:i:s'));
+
+if ($testType == 1) {
+    $result = $archiver
+        ->backupFrom('system_queue_job')
+        ->primaryKey('id')
+        ->whereClause("DATE(created_at) >= '2024-10-01'")
+        ->mode('BP')
+        ->chunk($chunkSize)
+        ->onDebug()
+        ->run();
+} else if ($testType == 2) {
+    $result = $archiver
+        ->backupFrom('system_queue_job')
+        ->primaryKey('id')
+        ->uniqueColumns('uuid, type')
+        ->whereClause("DATE(created_at) = '2025-02-13'")
+        ->mode('BO')
+        ->chunk($chunkSize)
+        ->onDebug()
+        ->run();
+} else if ($testType == 3) {
+    $result = $archiver
+        ->backupFrom('system_queue_job')
+        ->backupTo('system_queue_job_' . date('Ymd_His'))
+        ->primaryKey('id')
+        ->uniqueColumns('uuid, type')
+        ->whereClause("DATE(created_at) = '2025-02-13'")
+        ->mode('BO')
+        ->chunk($chunkSize)
+        ->onDebug()
+        ->allowDuplicate()
+        ->run();
+}
+
+if ($testType == 0) {
+    $result = $archiver
+        ->backupFrom('system_queue_job_arc')
+        ->backupTo('system_queue_job')
+        ->primaryKey('id')
+        ->whereClause("DATE(created_at) = '2025-02-13'")
+        ->mode('BP')
+        ->chunk($chunkSize)
+        ->onDebug()
+        ->run();
+}
+
+$archiver->logMessage("Ended backup process at : " . date('Y-m-d H:i:s') . "\n");
+$archiver->logMessage("Result : \n\n" . json_encode($result, JSON_PRETTY_PRINT));
 
 dd($result);
-
-// $action = isset($_POST['action']) ? $_POST['action'] : '';
-// $id = isset($_POST['id']) ? $_POST['id'] : '';
-
-// if ($action == 1) {
-
-//     $start = isset($_POST['start']) ? intval($_POST['start']) : 0;
-//     $length = isset($_POST['length']) ? intval($_POST['length']) : 10;
-
-//     $totalRecordsQuery = "SELECT COUNT(*) as count FROM system_queue_job";
-//     $totalRecordsResult = $db->execute($totalRecordsQuery);
-//     $totalRecords = $totalRecordsResult->fetch_assoc()["count"];
-
-//     $query = "SELECT id, uuid, attempt, message, created_at FROM system_queue_job LIMIT $start, $length";
-//     $result = $db->execute($query);
-//     $data = array();
-
-//     while ($row = $result->fetch_assoc()) {
-//         $data[] = $row;
-//     }
-
-//     json([
-//         "draw" => isset($_POST['draw']) ? intval($_POST['draw']) : 0,
-//         "recordsTotal" => $totalRecords,
-//         "recordsFiltered" => $totalRecords,
-//         "data" => $data
-//     ]);
-// }
-
-// if ($action == 2 && empty($id)) {
-//     $id = intval($_POST['id']);
-//     $result = $db->execute("SELECT id, uuid, attempt, message, created_at FROM system_queue_job WHERE id = $id");
-//     $row = $result->fetch_assoc();
-//     json($row);
-// }
 
 // Helper
 

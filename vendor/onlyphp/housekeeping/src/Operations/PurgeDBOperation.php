@@ -8,7 +8,7 @@ use OnlyPHP\Housekeeping\Utils\MemoryManager;
 use Exception;
 use RuntimeException;
 
-class PurgeOperation
+class PurgeDBOperation
 {
     private $config;
     private $logger;
@@ -51,8 +51,7 @@ class PurgeOperation
 
     private function buildUniqueCondition()
     {
-        // Only apply the unique condition check for BP mode
-        if ($this->config->getMode() !== ArchiverConstants::MODE_BACKUP_PURGE) {
+        if (empty($this->config->getUniqueColumns()) || !in_array($this->config->getMode(), [ArchiverConstants::MODE_BACKUP_PURGE])) {
             return '';
         }
 
