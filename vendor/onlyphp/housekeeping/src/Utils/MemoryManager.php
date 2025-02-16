@@ -46,6 +46,7 @@ class MemoryManager
             if (function_exists('gc_collect_cycles')) {
                 gc_collect_cycles();
             }
+            sleep(1);
         }
     }
 }

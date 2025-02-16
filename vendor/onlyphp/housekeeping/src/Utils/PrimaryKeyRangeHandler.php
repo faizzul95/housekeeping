@@ -36,10 +36,6 @@ class PrimaryKeyRangeHandler
             $stmt = $this->config->getConnection()->execute($rangeQuery, $params);
             $result = $this->fetchResult($stmt);
 
-            if (empty($result) || !isset($result['min_id']) || !isset($result['max_id'])) {
-                throw new PrimaryKeyRangeException("Failed to determine primary key range");
-            }
-
             return [
                 'min' => $this->castValue($result['min_id']),
                 'max' => $this->castValue($result['max_id']),
@@ -137,8 +133,7 @@ class PrimaryKeyRangeHandler
     {
         return match ($driver) {
             'pdo', 'mysqli', 'mariadb', 'codeigniter3' => "
-                SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, 
-                       NUMERIC_PRECISION, NUMERIC_SCALE
+                SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE
                 FROM INFORMATION_SCHEMA.COLUMNS 
                 WHERE TABLE_NAME = '{$table}' 
                 AND COLUMN_NAME = '{$column}'
@@ -284,7 +279,7 @@ class PrimaryKeyRangeHandler
     private function castValue($value)
     {
         if ($value === null) {
-            throw new PrimaryKeyRangeException("Primary key range cannot be null");
+            return $value;
         }
 
         return match ($this->columnInfo['type']) {

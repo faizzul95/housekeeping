@@ -4,6 +4,7 @@ namespace OnlyPHP\Housekeeping\Operations;
 
 use RuntimeException;
 use OnlyPHP\Housekeeping\Constants\ArchiverConstants;
+use OnlyPHP\Housekeeping\Results\ArchiveResult;
 
 class TableOperation
 {
@@ -18,6 +19,7 @@ class TableOperation
 
     public function prepareArchiveTable()
     {
+        $startTime = microtime(true);
         $checkTableSql = "SHOW TABLES LIKE '{$this->config->getArchiveTable()}'";
         $result = $this->config->getConnection()->execute($checkTableSql);
         $tableExists = $result->rowCount() > 0;
@@ -35,6 +37,17 @@ class TableOperation
             }
 
             $this->logger->log("Created archive table: {$this->config->getArchiveTable()}");
+        }
+
+        if ($this->config->isDebug()) {
+            $this->logger->log(
+                sprintf(
+                    "Prepare archive table '%s' with execution time: %s",
+                    $this->config->getArchiveTable(),
+                    ArchiveResult::calculateRuntime($startTime, microtime(true))
+                ),
+                ArchiverConstants::LOG_LEVEL_DEBUG
+            );
         }
     }
 

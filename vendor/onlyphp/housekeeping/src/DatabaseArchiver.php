@@ -180,11 +180,6 @@ class DatabaseArchiver
             // Get the range
             $range = $rangeHandler->determineRange();
 
-            // Validate range results
-            if ($range['min'] === null || $range['max'] === null) {
-                throw PrimaryKeyRangeException::nullRangeValue($primaryKey);
-            }
-
             // Handle empty result set
             if ($range['count'] === 0) {
                 $this->logMessage(

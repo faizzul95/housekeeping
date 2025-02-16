@@ -27,23 +27,23 @@
 
     <script>
         $(document).ready(function() {
-            $('#queueTable').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "ajax": {
-                    "url": "api.php",
-                    "type": "POST",
-                    "data": function(d) {
-                        d.action = 1;
-                    }
-                },
-                "columns": [
-                    { "data": "date" },
-                    { "data": "count" },
-                    { "data": "table" },
-                    { "data": "action" }
-                ]
-            });
+            // $('#queueTable').DataTable({
+            //     "processing": true,
+            //     "serverSide": true,
+            //     "ajax": {
+            //         "url": "api.php",
+            //         "type": "POST",
+            //         "data": function(d) {
+            //             d.action = 1;
+            //         }
+            //     },
+            //     "columns": [
+            //         { "data": "date" },
+            //         { "data": "count" },
+            //         { "data": "table" },
+            //         { "data": "action" }
+            //     ]
+            // });
         });
     </script>
 </body>

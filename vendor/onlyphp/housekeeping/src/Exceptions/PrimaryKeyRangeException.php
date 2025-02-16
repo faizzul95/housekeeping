@@ -79,20 +79,6 @@ class PrimaryKeyRangeException extends RuntimeException
     }
 
     /**
-     * Create an exception for null range values
-     *
-     * @param string $columnName
-     * @return self
-     */
-    public static function nullRangeValue($columnName)
-    {
-        return new self(
-            sprintf("Primary key range cannot be null for column '%s'", $columnName),
-            ['column' => $columnName]
-        );
-    }
-
-    /**
      * Create an exception for query execution failure
      *
      * @param string $query

@@ -17,7 +17,7 @@ if ($testType == 1) {
     $result = $archiver
         ->backupFrom('system_queue_job')
         ->primaryKey('id')
-        ->whereClause("DATE(created_at) >= '2024-10-01'")
+        ->whereClause("DATE(created_at) <= '2023-04-01'")
         ->mode('BP')
         ->chunk($chunkSize)
         ->onDebug()
