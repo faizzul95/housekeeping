@@ -328,7 +328,7 @@ class DatabaseArchiver
         $currentChunkSize = min($this->config->getChunkSize(), $remainingIds);
         $endId = $startId + $currentChunkSize - 1;
 
-        $idRangeCondition = "{$this->config->getPrimaryKey()} BETWEEN {$startId} AND {$endId}";
+        $idRangeCondition = "{$this->config->getPrimaryKey()} BETWEEN :0 AND :1";
 
         $backupCount = 0;
         $purgeCount = 0;
@@ -337,11 +337,11 @@ class DatabaseArchiver
 
         try {
             if (in_array($this->config->getMode(), [ArchiverConstants::MODE_BACKUP_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
-                $backupCount = $this->backupOperation->execute($idRangeCondition);
+                $backupCount = $this->backupOperation->execute($idRangeCondition, [$startId, $endId]);
             }
 
             if (in_array($this->config->getMode(), [ArchiverConstants::MODE_PURGE_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
-                $purgeCount = $this->purgeOperation->execute($idRangeCondition);
+                $purgeCount = $this->purgeOperation->execute($idRangeCondition, [$startId, $endId]);
             }
         } catch (Exception $e) {
             $this->logMessage("Processing error at ID range" . $idRangeCondition . ": " . $e->getMessage(), ArchiverConstants::LOG_LEVEL_ERROR);
@@ -365,6 +365,10 @@ class DatabaseArchiver
 
         if (function_exists('gc_collect_cycles')) {
             gc_collect_cycles();
+
+            if ($this->config->isDebug()) {
+                $this->logMessage("Clear garbage collector in `cleanup` function.", ArchiverConstants::LOG_LEVEL_INFO);
+            }
         }
 
         $this->logger->rotateLogIfNeeded();

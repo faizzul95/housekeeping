@@ -1,0 +1,34 @@
+[2025-02-21 13:05:19] [INFO] [PID:main] Starting backup process at : 2025-02-21 13:05:19
+[2025-02-21 13:05:19] [DEBUG] [PID:main] Prepare archive table 'system_queue_job_ARC' with execution time: 00:00:00.003
+[2025-02-21 13:05:19] [DEBUG] [PID:main] Running range query: 
+
+                SELECT MIN(id) as min_id, MAX(id) as max_id, COUNT(*) as total_count
+                FROM system_queue_job
+                WHERE DATE(created_at) <= '2023-06-26'
+            
+[2025-02-21 13:06:23] [WARNING] [PID:main] No records found matching criteria in table 'system_queue_job' where DATE(created_at) <= '2023-06-26'
+[2025-02-21 13:06:23] [DEBUG] [PID:main] Primary key range determined for table 'system_queue_job':
+- Column: id
+- Min: NULL
+- Max: NULL
+- Count: 0
+- Execution Time: 00:01:03.810
+[2025-02-21 13:06:23] [INFO] [PID:main] Clear garbage collector in `determinePrimaryKeyRange` function.
+[2025-02-21 13:06:23] [INFO] [PID:main] Clear garbage collector in `cleanup` function.
+[2025-02-21 13:06:23] [INFO] [PID:main] Ended backup process at : 2025-02-21 13:06:23
+
+[2025-02-21 13:06:23] [INFO] [PID:main] Result : 
+
+{
+    "status": "completed",
+    "mode": "BP",
+    "table": "system_queue_job",
+    "backup_table": "system_queue_job_ARC",
+    "total": 0,
+    "processed": {
+        "backup": 0,
+        "purge": 0
+    },
+    "messages": "No records found to process",
+    "execution_time": "00:01:03.815"
+}

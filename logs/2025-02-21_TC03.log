@@ -1,0 +1,804 @@
+[2025-02-21 14:01:52] [INFO] [PID:main] Starting backup process at : 2025-02-21 14:01:52
+[2025-02-21 14:01:52] [DEBUG] [PID:main] Prepare archive table 'system_queue_job_ARC' with execution time: 00:00:00.004
+[2025-02-21 14:01:52] [DEBUG] [PID:main] Running range query: 
+
+                SELECT MIN(id) as min_id, MAX(id) as max_id, COUNT(*) as total_count
+                FROM system_queue_job
+                WHERE DATE(created_at) <= '2023-07-31'
+            
+[2025-02-21 14:02:56] [DEBUG] [PID:main] Primary key range determined for table 'system_queue_job':
+- Column: id
+- Min: 73918678
+- Max: 76449782
+- Count: 2531105
+- Execution Time: 00:01:03.722
+[2025-02-21 14:02:56] [INFO] [PID:main] Starting processing for ID range: 73918678 to 73968677
+[2025-02-21 14:02:56] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:03:38] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:04:19] [INFO] [PID:main] Starting processing for ID range: 73968678 to 74018677
+[2025-02-21 14:04:19] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:05:03] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:05:45] [INFO] [PID:main] Starting processing for ID range: 74018678 to 74068677
+[2025-02-21 14:05:45] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:06:28] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:07:14] [INFO] [PID:main] Starting processing for ID range: 74068678 to 74118677
+[2025-02-21 14:07:14] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:08:00] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:08:40] [INFO] [PID:main] Starting processing for ID range: 74118678 to 74168677
+[2025-02-21 14:08:40] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:09:29] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:10:13] [INFO] [PID:main] Starting processing for ID range: 74168678 to 74218677
+[2025-02-21 14:10:13] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:11:04] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:11:44] [INFO] [PID:main] Starting processing for ID range: 74218678 to 74268677
+[2025-02-21 14:11:44] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:12:27] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:13:06] [INFO] [PID:main] Starting processing for ID range: 74268678 to 74318677
+[2025-02-21 14:13:06] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:13:50] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:14:29] [INFO] [PID:main] Starting processing for ID range: 74318678 to 74368677
+[2025-02-21 14:14:29] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:15:13] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:15:53] [INFO] [PID:main] Starting processing for ID range: 74368678 to 74418677
+[2025-02-21 14:15:53] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:16:34] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:17:13] [INFO] [PID:main] Starting processing for ID range: 74418678 to 74468677
+[2025-02-21 14:17:13] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:17:56] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:18:37] [INFO] [PID:main] Starting processing for ID range: 74468678 to 74518677
+[2025-02-21 14:18:37] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:19:21] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:20:06] [INFO] [PID:main] Starting processing for ID range: 74518678 to 74568677
+[2025-02-21 14:20:06] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:20:51] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:21:31] [INFO] [PID:main] Starting processing for ID range: 74568678 to 74618677
+[2025-02-21 14:21:31] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:22:13] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:22:55] [INFO] [PID:main] Starting processing for ID range: 74618678 to 74668677
+[2025-02-21 14:22:55] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:23:39] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:24:19] [INFO] [PID:main] Starting processing for ID range: 74668678 to 74718677
+[2025-02-21 14:24:19] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:25:01] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:25:48] [INFO] [PID:main] Starting processing for ID range: 74718678 to 74768677
+[2025-02-21 14:25:48] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:26:33] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:27:14] [INFO] [PID:main] Starting processing for ID range: 74768678 to 74818677
+[2025-02-21 14:27:14] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:27:58] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:28:39] [INFO] [PID:main] Starting processing for ID range: 74818678 to 74868677
+[2025-02-21 14:28:39] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:29:21] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:30:06] [INFO] [PID:main] Starting processing for ID range: 74868678 to 74918677
+[2025-02-21 14:30:06] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:30:52] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:31:34] [INFO] [PID:main] Starting processing for ID range: 74918678 to 74968677
+[2025-02-21 14:31:34] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:32:22] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:33:04] [INFO] [PID:main] Starting processing for ID range: 74968678 to 75018677
+[2025-02-21 14:33:04] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:33:49] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:34:32] [INFO] [PID:main] Starting processing for ID range: 75018678 to 75068677
+[2025-02-21 14:34:32] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:35:17] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:35:59] [INFO] [PID:main] Starting processing for ID range: 75068678 to 75118677
+[2025-02-21 14:35:59] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:36:46] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:37:31] [INFO] [PID:main] Starting processing for ID range: 75118678 to 75168677
+[2025-02-21 14:37:31] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:38:19] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:39:04] [INFO] [PID:main] Starting processing for ID range: 75168678 to 75218677
+[2025-02-21 14:39:04] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:39:51] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:40:35] [INFO] [PID:main] Starting processing for ID range: 75218678 to 75268677
+[2025-02-21 14:40:35] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:41:19] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:42:03] [INFO] [PID:main] Starting processing for ID range: 75268678 to 75318677
+[2025-02-21 14:42:03] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:42:53] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:43:39] [INFO] [PID:main] Starting processing for ID range: 75318678 to 75368677
+[2025-02-21 14:43:39] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:44:27] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:45:11] [INFO] [PID:main] Starting processing for ID range: 75368678 to 75418677
+[2025-02-21 14:45:11] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:46:00] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:46:50] [INFO] [PID:main] Starting processing for ID range: 75418678 to 75468677
+[2025-02-21 14:46:50] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:47:37] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:48:21] [INFO] [PID:main] Starting processing for ID range: 75468678 to 75518677
+[2025-02-21 14:48:21] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:49:10] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:49:54] [INFO] [PID:main] Starting processing for ID range: 75518678 to 75568677
+[2025-02-21 14:49:54] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:50:44] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:51:29] [INFO] [PID:main] Starting processing for ID range: 75568678 to 75618677
+[2025-02-21 14:51:29] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:52:16] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:53:01] [INFO] [PID:main] Starting processing for ID range: 75618678 to 75668677
+[2025-02-21 14:53:01] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:53:50] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:54:34] [INFO] [PID:main] Starting processing for ID range: 75668678 to 75718677
+[2025-02-21 14:54:34] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:55:24] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:56:10] [INFO] [PID:main] Starting processing for ID range: 75718678 to 75768677
+[2025-02-21 14:56:10] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:56:58] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:57:44] [INFO] [PID:main] Starting processing for ID range: 75768678 to 75818677
+[2025-02-21 14:57:44] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:58:37] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 14:59:26] [INFO] [PID:main] Starting processing for ID range: 75818678 to 75868677
+[2025-02-21 14:59:26] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:00:18] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:01:08] [INFO] [PID:main] Starting processing for ID range: 75868678 to 75918677
+[2025-02-21 15:01:08] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:02:00] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:02:50] [INFO] [PID:main] Starting processing for ID range: 75918678 to 75968677
+[2025-02-21 15:02:50] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:03:46] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:04:39] [INFO] [PID:main] Starting processing for ID range: 75968678 to 76018677
+[2025-02-21 15:04:39] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:05:35] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:06:23] [INFO] [PID:main] Starting processing for ID range: 76018678 to 76068677
+[2025-02-21 15:06:23] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:07:20] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:08:11] [INFO] [PID:main] Starting processing for ID range: 76068678 to 76118677
+[2025-02-21 15:08:11] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:09:04] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:09:55] [INFO] [PID:main] Starting processing for ID range: 76118678 to 76168677
+[2025-02-21 15:09:55] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:10:48] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:11:46] [INFO] [PID:main] Starting processing for ID range: 76168678 to 76218677
+[2025-02-21 15:11:46] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:12:36] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:13:23] [INFO] [PID:main] Starting processing for ID range: 76218678 to 76268677
+[2025-02-21 15:13:23] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:14:12] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:14:59] [INFO] [PID:main] Starting processing for ID range: 76268678 to 76318677
+[2025-02-21 15:14:59] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:15:48] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:16:37] [INFO] [PID:main] Starting processing for ID range: 76318678 to 76368677
+[2025-02-21 15:16:37] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:17:26] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:18:15] [INFO] [PID:main] Starting processing for ID range: 76368678 to 76418677
+[2025-02-21 15:18:15] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:19:07] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:20:01] [INFO] [PID:main] Starting processing for ID range: 76418678 to 76449782
+[2025-02-21 15:20:01] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:20:58] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-07-31')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:21:49] [INFO] [PID:main] Clear garbage collector in `cleanup` function.
+[2025-02-21 15:21:49] [INFO] [PID:main] Ended backup process at : 2025-02-21 15:21:49
+
+[2025-02-21 15:21:49] [INFO] [PID:main] Result : 
+
+{
+    "status": "completed",
+    "mode": "BP",
+    "table": "system_queue_job",
+    "backup_table": "system_queue_job_ARC",
+    "total": 2531105,
+    "processed": {
+        "backup": 2531105,
+        "purge": 2531105
+    },
+    "messages": "Records processed successfully",
+    "execution_time": "01:19:57.139",
+    "threads": 1,
+    "memory": {
+        "initial": "12 MB",
+        "final": "12 MB",
+        "peak": "12 MB",
+        "used": "0 B"
+    }
+}

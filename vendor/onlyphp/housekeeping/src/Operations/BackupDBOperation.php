@@ -19,7 +19,7 @@ class BackupDBOperation
         $this->logger = $logger;
     }
 
-    public function execute($idRangeCondition)
+    public function execute($idRangeCondition, $params = [])
     {
         MemoryManager::checkMemoryUsage($this->config, $this->logger);
 
@@ -33,7 +33,7 @@ class BackupDBOperation
         $connection = $this->config->getConnection();
         $connection->beginTransaction(); // Start transaction
         try {
-            $result = $connection->execute($backupSql);
+            $result = $connection->execute($backupSql, $params);
 
             if ($result === false) {
                 throw new RuntimeException("Query execution returned no result for this query : {$backupSql}.");
@@ -45,6 +45,8 @@ class BackupDBOperation
             $connection->rollback(); // Rollback on error
             return 0; // Return 0 rows affected
         }
+
+        $result->free(); // Free the result set
 
         return $result->rowCount();
     }

@@ -1,0 +1,72 @@
+[2025-02-21 15:36:56] [INFO] [PID:main] Starting backup process at : 2025-02-21 15:36:56
+[2025-02-21 15:36:56] [DEBUG] [PID:main] Prepare archive table 'system_queue_job_ARC' with execution time: 00:00:00.006
+[2025-02-21 15:36:56] [DEBUG] [PID:main] Running range query: 
+
+                SELECT MIN(id) as min_id, MAX(id) as max_id, COUNT(*) as total_count
+                FROM system_queue_job
+                WHERE DATE(created_at) = '2023-08-04'
+            
+[2025-02-21 15:38:01] [DEBUG] [PID:main] Primary key range determined for table 'system_queue_job':
+- Column: id
+- Min: 73597445
+- Max: 73729932
+- Count: 132488
+- Execution Time: 00:01:05.474
+[2025-02-21 15:38:01] [INFO] [PID:main] Starting processing for ID range: 73597445 to 73647444
+[2025-02-21 15:38:01] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) = '2023-08-04')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:38:58] [INFO] [PID:main] Starting processing for ID range: 73647445 to 73697444
+[2025-02-21 15:38:58] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) = '2023-08-04')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:39:50] [INFO] [PID:main] Starting processing for ID range: 73697445 to 73729932
+[2025-02-21 15:39:50] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) = '2023-08-04')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:40:42] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) = '2023-08-04')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 15:41:33] [INFO] [PID:main] Clear garbage collector in `cleanup` function.
+[2025-02-21 15:41:33] [INFO] [PID:main] Ended backup process at : 2025-02-21 15:41:33
+
+[2025-02-21 15:41:33] [INFO] [PID:main] Result : 
+
+{
+    "status": "completed",
+    "mode": "BP",
+    "table": "system_queue_job",
+    "backup_table": "system_queue_job_ARC",
+    "total": 132488,
+    "processed": {
+        "backup": 132488,
+        "purge": 132488
+    },
+    "messages": "Records processed successfully",
+    "execution_time": "00:04:37.237",
+    "threads": 1,
+    "memory": {
+        "initial": "10 MB",
+        "final": "10 MB",
+        "peak": "10 MB",
+        "used": "0 B"
+    }
+}

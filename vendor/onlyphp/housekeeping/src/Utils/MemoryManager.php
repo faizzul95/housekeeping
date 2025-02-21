@@ -45,6 +45,7 @@ class MemoryManager
             $logger->log("High memory usage detected: " . self::formatBytes($memoryUsed), ArchiverConstants::LOG_LEVEL_WARNING);
             if (function_exists('gc_collect_cycles')) {
                 gc_collect_cycles();
+                $logger->log("Clear garbage collector in `checkMemoryUsage` function.", ArchiverConstants::LOG_LEVEL_INFO);
             }
             sleep(1);
         }

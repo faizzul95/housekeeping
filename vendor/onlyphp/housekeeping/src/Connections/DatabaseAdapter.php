@@ -185,11 +185,16 @@ class DatabaseAdapter
     }
 
     /**
-     * Execute a SQL query
-     * @param string $sql
-     * @param array $params
-     * @return DatabaseStatement|null
-     * @throws Exception
+     * Executes a SQL statement with parameter binding support.
+     * 
+     * This method supports standardized parameter binding using :0, :1, :2 notation
+     * across different database drivers. It automatically adapts the parameter syntax
+     * for database drivers that require different formats (like ? for MySQLi).
+     * 
+     * @param string $sql The SQL statement to execute
+     * @param array $params An array of parameters to bind (can be numeric or associative)
+     * @return DatabaseStatement The resulting statement object
+     * @throws RuntimeException If the database connection is not initialized or query execution fails
      */
     public function execute($sql, $params = [])
     {
@@ -198,6 +203,21 @@ class DatabaseAdapter
         }
 
         try {
+            // Adapt the SQL to the appropriate parameter syntax for this connection type
+            $sql = $this->adaptParameterSyntax($sql, $this->connectionType);
+
+            // Standardize parameters if numeric array is provided
+            if (!empty($params) && array_keys($params) === range(0, count($params) - 1)) {
+                // Convert numeric array to associative with :0, :1 keys for drivers that support it
+                if (!in_array($this->connectionType, ['mysqli', 'mariadb', 'codeigniter3'])) {
+                    $namedParams = [];
+                    foreach ($params as $index => $value) {
+                        $namedParams[':' . $index] = $value;
+                    }
+                    $params = $namedParams;
+                }
+            }
+
             switch ($this->connectionType) {
                 case 'pdo':
                 case 'pdo_oci':
@@ -208,12 +228,12 @@ class DatabaseAdapter
 
                 case 'mysqli':
                 case 'mariadb':
-                    if (!empty($params)) {
-                        $stmt = $this->connection->prepare($sql);
-                        if ($stmt === false) {
-                            throw new RuntimeException("Failed to prepare statement: " . $this->connection->error);
-                        }
+                    $stmt = $this->connection->prepare($sql);
+                    if ($stmt === false) {
+                        throw new RuntimeException("Failed to prepare statement: " . $this->connection->error);
+                    }
 
+                    if (!empty($params)) {
                         $types = '';
                         foreach ($params as $param) {
                             if (is_int($param)) $types .= 'i';
@@ -222,18 +242,23 @@ class DatabaseAdapter
                             else $types .= 'b';
                         }
 
-                        $stmt->bind_param($types, ...$params);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                    } else {
-                        $result = $this->connection->query($sql);
+                        // Reference parameters for bind_param
+                        $bindParams = array($types);
+                        foreach ($params as $key => &$value) {
+                            $bindParams[] = &$value;
+                        }
+
+                        call_user_func_array(array($stmt, 'bind_param'), $bindParams);
                     }
 
-                    if ($result === false) {
-                        throw new RuntimeException("Query execution failed: " . $this->connection->error);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+
+                    if ($result === false && $stmt->errno) {
+                        throw new RuntimeException("Query execution failed: " . $stmt->error);
                     }
 
-                    $this->lastStatement = new DatabaseStatement($result, $this->connectionType);
+                    $this->lastStatement = new DatabaseStatement($result ?? $stmt, $this->connectionType);
                     break;
 
                 case 'codeigniter3':
@@ -253,16 +278,23 @@ class DatabaseAdapter
                         throw new RuntimeException("Failed to parse OCI statement");
                     }
 
-                    // Bind parameters if any
+                    // Bind parameters
                     if (!empty($params)) {
-                        foreach ($params as $key => $value) {
-                            $paramName = is_numeric($key) ? ':p' . $key : ':' . $key;
-                            oci_bind_by_name($stmt, $paramName, $params[$key]);
+                        if (array_keys($params) === range(0, count($params) - 1)) {
+                            // Numeric array, use :0, :1 format
+                            foreach ($params as $index => $value) {
+                                oci_bind_by_name($stmt, ':' . $index, $params[$index]);
+                            }
+                        } else {
+                            // Associative array
+                            foreach ($params as $key => $value) {
+                                $paramName = ltrim($key, ':');
+                                oci_bind_by_name($stmt, ':' . $paramName, $params[$key]);
+                            }
                         }
                     }
 
-                    // Execute the statement
-                    $result = oci_execute($stmt, OCI_DEFAULT); // OCI_DEFAULT to support transactions
+                    $result = oci_execute($stmt, OCI_DEFAULT);
                     if (!$result) {
                         $error = oci_error($stmt);
                         throw new RuntimeException("OCI query execution failed: " . ($error ? $error['message'] : 'Unknown error'));
@@ -276,6 +308,25 @@ class DatabaseAdapter
         } catch (Exception $e) {
             throw new RuntimeException("Query execution failed: " . $e->getMessage(), 0, $e);
         }
+    }
+
+    /**
+     * Adapts parameter syntax in SQL queries based on the database connection type.
+     * 
+     * Converts standardized :0, :1, :2 parameter format to the appropriate syntax
+     * for different database drivers (like ? for MySQLi).
+     *
+     * @param string $sql The SQL statement with parameters
+     * @param string $connectionType The database connection type
+     * @return string The SQL with adapted parameter syntax
+     */
+    private function adaptParameterSyntax($sql, $connectionType)
+    {
+        // For drivers that don't support :0 :1 syntax, convert to ? placeholders
+        if (in_array($connectionType, ['mysqli', 'mariadb', 'codeigniter3'])) {
+            return preg_replace('/:(\d+)/', '?', $sql);
+        }
+        return $sql;
     }
 
     /**

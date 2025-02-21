@@ -1,0 +1,54 @@
+[2025-02-21 13:39:01] [INFO] [PID:main] Starting backup process at : 2025-02-21 13:39:01
+[2025-02-21 13:39:01] [DEBUG] [PID:main] Prepare archive table 'system_queue_job_ARC' with execution time: 00:00:00.007
+[2025-02-21 13:39:01] [DEBUG] [PID:main] Running range query: 
+
+                SELECT MIN(id) as min_id, MAX(id) as max_id, COUNT(*) as total_count
+                FROM system_queue_job
+                WHERE DATE(created_at) = '2023-06-27'
+            
+[2025-02-21 13:40:06] [DEBUG] [PID:main] Primary key range determined for table 'system_queue_job':
+- Column: id
+- Min: 76449783
+- Max: 76482696
+- Count: 32914
+- Execution Time: 00:01:05.231
+[2025-02-21 13:40:06] [INFO] [PID:main] Starting processing for ID range: 76449783 to 76482696
+[2025-02-21 13:40:06] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) = '2023-06-27')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 13:40:47] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) = '2023-06-27')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-02-21 13:41:28] [INFO] [PID:main] Clear garbage collector in `cleanup` function.
+[2025-02-21 13:41:28] [INFO] [PID:main] Ended backup process at : 2025-02-21 13:41:28
+
+[2025-02-21 13:41:28] [INFO] [PID:main] Result : 
+
+{
+    "status": "completed",
+    "mode": "BP",
+    "table": "system_queue_job",
+    "backup_table": "system_queue_job_ARC",
+    "total": 32914,
+    "processed": {
+        "backup": 32914,
+        "purge": 32914
+    },
+    "messages": "Records processed successfully",
+    "execution_time": "00:02:27.236",
+    "threads": 1,
+    "memory": {
+        "initial": "6 MB",
+        "final": "6 MB",
+        "peak": "6 MB",
+        "used": "0 B"
+    }
+}
