@@ -3,7 +3,6 @@
 namespace OnlyPHP\Housekeeping\Results;
 
 use OnlyPHP\Housekeeping\Utils\MemoryManager;
-use OnlyPHP\Housekeeping\Utils\Logger;
 use InvalidArgumentException, RuntimeException, Exception;
 
 class ArchiveResult
@@ -21,6 +20,7 @@ class ArchiveResult
                 'purge' => 0,
             ],
             'messages' => 'No records found to process',
+            'execution_date' => date('Y-m-d H:i:s'),
             'execution_time' => self::calculateRuntime($startTime, microtime(true))
         ];
 
@@ -40,6 +40,7 @@ class ArchiveResult
             'total' => $totalRecords,
             'processed' => $processedCount,
             'messages' => 'Records processed successfully',
+            'execution_date' => date('Y-m-d H:i:s'),
             'execution_time' => self::calculateRuntime($startTime, microtime(true)),
             'threads' => $threads,
             'memory' => [

@@ -33,9 +33,11 @@ class DatabaseArchiver
         $this->driver($connection->getConnectionType());
 
         $this->logger = new Logger($this->config->getLogPath());
-        $this->backupOperation = new BackupDBOperation($this->config, $this->logger);
-        $this->purgeOperation = new PurgeDBOperation($this->config, $this->logger);
-        $this->tableOperation = new TableOperation($this->config, $this->logger);
+
+        // Defer creation of operations until needed
+        $this->backupOperation = null;
+        $this->purgeOperation = null;
+        $this->tableOperation = null;
     }
 
     public function driver($driver)
@@ -123,9 +125,15 @@ class DatabaseArchiver
 
         try {
             ConfigurationValidator::validate($this->config);
+
+            // Initialize TableOperation only when needed
+            if ($this->tableOperation === null) {
+                $this->tableOperation = new TableOperation($this->config, $this->logger);
+            }
+
             $this->tableOperation->prepareArchiveTable();
 
-            $this->determinePrimaryKeyRange();
+            $keyRange = $this->determinePrimaryKeyRange();
 
             if ($this->config->getPrimaryKeyRange()['count'] === 0) {
                 return ArchiveResult::createEmpty(
@@ -135,6 +143,9 @@ class DatabaseArchiver
                     $this->config->getMode()
                 );
             }
+
+            // Determine the optimal chunk size based on dataset size
+            $this->optimizeChunkSize($keyRange['count']);
 
             $processedCount = $this->isParallelSupported() && $this->config->getParallelThreads() > 1
                 ? $this->runParallelArchiving()
@@ -155,6 +166,44 @@ class DatabaseArchiver
             throw new RuntimeException("Archiving failed: " . $e->getMessage(), 0, $e);
         } finally {
             $this->cleanup();
+        }
+    }
+
+    private function optimizeChunkSize($totalRecords)
+    {
+        // Adjust chunk size based on total record count
+        $availableMemory = $this->config->getMemoryLimit() * 0.7; // Use 70% of available memory
+        $estimatedRowSize = 4096; // Estimate average row size in bytes
+
+        $memoryBasedChunk = floor($availableMemory / $estimatedRowSize);
+
+        // Balance between memory and optimal DB performance
+        $suggestedChunk = min(
+            max(
+                ArchiverConstants::MIN_CHUNK_SIZE,
+                min($memoryBasedChunk, floor($totalRecords / 20)) // Try to process in ~20 chunks minimum
+            ),
+            ArchiverConstants::MAX_CHUNK_SIZE,
+            $totalRecords // Don't exceed total records
+        );
+
+        if ($this->config->isDebug()) {
+            $this->logMessage(
+                "Chunk size optimization: Suggested=$suggestedChunk, Current=" . $this->config->getChunkSize(),
+                ArchiverConstants::LOG_LEVEL_DEBUG
+            );
+        }
+
+        // Only update if suggested chunk is significantly different
+        if (abs($suggestedChunk - $this->config->getChunkSize()) > $this->config->getChunkSize() * 0.2) {
+            $this->config->setChunkSize($suggestedChunk);
+
+            if ($this->config->isDebug()) {
+                $this->logMessage(
+                    "Chunk size optimized to: " . $this->config->getChunkSize(),
+                    ArchiverConstants::LOG_LEVEL_DEBUG
+                );
+            }
         }
     }
 
@@ -190,14 +239,21 @@ class DatabaseArchiver
                     ),
                     ArchiverConstants::LOG_LEVEL_WARNING
                 );
+            } else if ($this->config->isDebug()) {
+                $this->logMessage(
+                    sprintf(
+                        "Found %d records in range [%s - %s] in table '%s'",
+                        $range['count'],
+                        var_export($range['min'], true),
+                        var_export($range['max'], true),
+                        $tableName
+                    ),
+                    ArchiverConstants::LOG_LEVEL_DEBUG
+                );
             }
 
             // Set the range in configuration
-            $this->config->setPrimaryKeyRange([
-                'min' => $range['min'],
-                'max' => $range['max'],
-                'count' => $range['count']
-            ]);
+            $this->config->setPrimaryKeyRange($range);
 
             // Log debug information if enabled
             if ($this->config->isDebug()) {
@@ -221,10 +277,10 @@ class DatabaseArchiver
             }
 
             // Memory cleanup for large datasets
-            unset($range);
-            if (function_exists('gc_collect_cycles')) {
-                gc_collect_cycles();
-            }
+            unset($rangeHandler);
+            $this->performGarbageCollection("after range determination");
+
+            return $range;
         } catch (PrimaryKeyRangeException $e) {
             $this->logMessage(
                 sprintf(
@@ -274,14 +330,43 @@ class DatabaseArchiver
         $range = $this->config->getPrimaryKeyRange();
         $currentId = $range['min'];
         $maxId = $range['max'];
+        $chunkSize = $this->config->getChunkSize();
+        $totalIdCount = $maxId - $currentId + 1;
+        $processedCount = 0;
+        $lastProgressReport = 0;
+
+        // Initialize operations only when needed
+        $this->initializeOperations();
 
         while ($currentId <= $maxId) {
             $remainingIds = $maxId - $currentId + 1;
-            $currentChunkSize = min($this->config->getChunkSize(), $remainingIds);
+            $currentChunkSize = min($chunkSize, $remainingIds);
 
-            $processedInChunk = $this->processChunk($currentId);
+            $endId = $currentId + $currentChunkSize - 1;
+            $processedInChunk = $this->processIdRange($currentId, $endId);
+
             $backupCount += $processedInChunk['backup'];
             $purgeCount += $processedInChunk['purge'];
+
+            $processedCount += $currentChunkSize;
+            $progressPercent = floor(($processedCount / $totalIdCount) * 100);
+
+            // Report progress at 5% increments
+            if ($progressPercent - $lastProgressReport >= 5) {
+                $this->logMessage(
+                    sprintf(
+                        "Processing progress: %d%% complete (%d/%d IDs)",
+                        $progressPercent,
+                        $processedCount,
+                        $totalIdCount
+                    ),
+                    ArchiverConstants::LOG_LEVEL_INFO
+                );
+                $lastProgressReport = $progressPercent;
+
+                // Periodically collect garbage
+                $this->performGarbageCollection();
+            }
 
             $currentId += $currentChunkSize;
         }
@@ -296,6 +381,9 @@ class DatabaseArchiver
             return $this->runSequentialArchiving();
         }
 
+        // Initialize operations before parallelization
+        $this->initializeOperations();
+
         $parallelManager = new ParallelManager($this->logger, $this->config);
         return $parallelManager->execute(
             $this->config->getPrimaryKeyRange(),
@@ -303,74 +391,126 @@ class DatabaseArchiver
         );
     }
 
-    private function processIdRange($startId, $endId)
+    public function processIdRange($startId, $endId)
     {
+        // Make sure operations are initialized
+        $this->initializeOperations();
+
         $backupCount = 0;
         $purgeCount = 0;
-        $currentId = $startId;
+        $idRangeCondition = "{$this->config->getPrimaryKey()} BETWEEN :0 AND :1";
+        $params = [$startId, $endId];
 
-        while ($currentId <= $endId) {
-            $remainingIds = $endId - $currentId + 1;
-            $currentChunkSize = min($this->config->getChunkSize(), $remainingIds);
+        try {
+            if (in_array($this->config->getMode(), [ArchiverConstants::MODE_BACKUP_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
+                $backupCount = $this->backupOperation->execute($idRangeCondition, $params);
 
-            $processedInChunk = $this->processChunk($currentId);
-            $backupCount += $processedInChunk['backup'];
-            $purgeCount += $processedInChunk['purge'];
-            $currentId += $currentChunkSize;
+                if ($this->config->isDebug() && $backupCount > 0) {
+                    $this->logMessage(
+                        "Backed up {$backupCount} records from range {$startId}-{$endId}",
+                        ArchiverConstants::LOG_LEVEL_DEBUG
+                    );
+                }
+            }
+
+            if (in_array($this->config->getMode(), [ArchiverConstants::MODE_PURGE_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
+                $purgeCount = $this->purgeOperation->execute($idRangeCondition, $params);
+
+                if ($this->config->isDebug() && $purgeCount > 0) {
+                    $this->logMessage(
+                        "Purged {$purgeCount} records from range {$startId}-{$endId}",
+                        ArchiverConstants::LOG_LEVEL_DEBUG
+                    );
+                }
+            }
+
+            $this->performGarbageCollection();
+        } catch (Exception $e) {
+            $this->logMessage(
+                "Processing error at ID range {$startId}-{$endId}: " . $e->getMessage(),
+                ArchiverConstants::LOG_LEVEL_ERROR
+            );
         }
 
         return ['backup' => $backupCount, 'purge' => $purgeCount];
     }
 
-    private function processChunk($startId)
+    private function initializeOperations()
     {
-        $remainingIds = $this->config->getPrimaryKeyRange()['max'] - $startId + 1;
-        $currentChunkSize = min($this->config->getChunkSize(), $remainingIds);
-        $endId = $startId + $currentChunkSize - 1;
-
-        $idRangeCondition = "{$this->config->getPrimaryKey()} BETWEEN :0 AND :1";
-
-        $backupCount = 0;
-        $purgeCount = 0;
-
-        $this->logMessage("Starting processing for ID range: {$startId} to {$endId}");
-
-        try {
-            if (in_array($this->config->getMode(), [ArchiverConstants::MODE_BACKUP_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
-                $backupCount = $this->backupOperation->execute($idRangeCondition, [$startId, $endId]);
-            }
-
-            if (in_array($this->config->getMode(), [ArchiverConstants::MODE_PURGE_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
-                $purgeCount = $this->purgeOperation->execute($idRangeCondition, [$startId, $endId]);
-            }
-        } catch (Exception $e) {
-            $this->logMessage("Processing error at ID range" . $idRangeCondition . ": " . $e->getMessage(), ArchiverConstants::LOG_LEVEL_ERROR);
+        // Lazy initialization of operation objects
+        if ($this->backupOperation === null && in_array($this->config->getMode(), [ArchiverConstants::MODE_BACKUP_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
+            $this->backupOperation = new BackupDBOperation($this->config, $this->logger);
         }
 
-        return ['backup' => $backupCount, 'purge' => $purgeCount];
+        if ($this->purgeOperation === null && in_array($this->config->getMode(), [ArchiverConstants::MODE_PURGE_ONLY, ArchiverConstants::MODE_BACKUP_PURGE])) {
+            $this->purgeOperation = new PurgeDBOperation($this->config, $this->logger);
+        }
+
+        if ($this->tableOperation === null) {
+            $this->tableOperation = new TableOperation($this->config, $this->logger);
+        }
     }
 
     private function isParallelSupported()
     {
-        return $this->config->getParallelEnableStatus()
-            && function_exists('pcntl_fork')
+        if (!$this->config->getParallelEnableStatus()) {
+            return false;
+        }
+
+        // Check if Windows can execute background processes using `start /B`
+        if (strncasecmp(PHP_OS, 'WIN', 3) === 0) {
+            return function_exists('popen') && function_exists('pclose');
+        }
+
+        // Linux/Unix: Check for required PCNTL and POSIX functions
+        return function_exists('pcntl_fork')
             && function_exists('pcntl_signal')
             && function_exists('posix_kill')
             && function_exists('posix_getpid');
+    }
+
+
+    private function performGarbageCollection($context = '', $forceCleanup = false)
+    {
+        // Check current memory usage
+        $memoryUsage = memory_get_usage(true);
+        $memoryLimit = $this->config->getMemoryLimit();
+        $memoryPercent = ($memoryUsage / $memoryLimit) * 100;
+
+        // Force garbage collection if memory usage is above 70%
+        if (($memoryPercent > 70 || $forceCleanup) && function_exists('gc_collect_cycles')) {
+            $collected = gc_collect_cycles();
+
+            if ($this->config->isDebug()) {
+                $this->logMessage(
+                    sprintf(
+                        "Memory optimization: Used %.2f%% of limit. Garbage collection freed %d references%s.",
+                        $memoryPercent,
+                        $collected,
+                        !empty($context) ? " $context" : ""
+                    ),
+                    ArchiverConstants::LOG_LEVEL_DEBUG
+                );
+            }
+
+            unset($collected);
+
+            return true;
+        }
+
+        return false;
     }
 
     private function cleanup()
     {
         $this->config->setPrimaryKeyRange(null);
 
-        if (function_exists('gc_collect_cycles')) {
-            gc_collect_cycles();
+        // Clear operation references to free memory
+        $this->backupOperation = null;
+        $this->purgeOperation = null;
+        $this->tableOperation = null;
 
-            if ($this->config->isDebug()) {
-                $this->logMessage("Clear garbage collector in `cleanup` function.", ArchiverConstants::LOG_LEVEL_INFO);
-            }
-        }
-
+        $this->performGarbageCollection("in cleanup", true);
         $this->logger->rotateLogIfNeeded();
     }
 }

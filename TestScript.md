@@ -507,3 +507,163 @@
     ## Result : PASSED ✅
 
 ====================================================================================================
+
+### TEST CASE 6 : Backup & Purge Data from `system_queue_job` table.
+
+    ## Check original data in the source table & archieve table.
+        Current Source  : 68,202,563
+        Current Archive : 11,084,531
+
+    ## Test Configuration :
+
+        $result = $archiver
+                ->backupFrom('system_queue_job')
+                ->primaryKey('id')
+                ->whereClause("DATE(created_at) <= '2023-08-13'")
+                ->mode('BP')
+                ->chunk('50000')
+                ->onDebug()
+                ->run();
+
+    ## Test Data :
+        2023-08-13      71516
+        2023-08-12      119803
+        2023-08-11      114466
+        2023-08-10      67919
+        2023-08-09      101198
+        2023-08-08      32234
+        2023-08-07      87579
+        2023-08-06      71189
+        2023-08-05      73211
+        2023-08-03      47804
+        2023-08-02      71559
+        2023-08-01      69382
+
+    ## Expected Result :-
+        Backup : 927,860
+        Purge : 927,860
+
+    ## Actual Result :-
+
+        {
+            "status": "completed",
+            "mode": "BP",
+            "table": "system_queue_job",
+            "backup_table": "system_queue_job_ARC",
+            "total": 927860,
+            "processed": {
+                "backup": 927860,
+                "purge": 927860
+            },
+            "messages": "Records processed successfully",
+            "execution_date": "2025-03-01 07:56:40",
+            "execution_time": "00:38:50.874",
+            "threads": 1,
+            "memory": {
+                "initial": "12 MB",
+                "final": "12 MB",
+                "peak": "12 MB",
+                "used": "0 B"
+            }
+        }
+
+    ## Verify Data After Running Test :
+        Current Source  : 67,274,703
+        Current Archive : 12,012,391
+
+    ## Log File : 2025-03-01_TC01.log
+
+    ## Result : PASSED ✅
+
+====================================================================================================
+
+### TEST CASE 7 : Backup & Purge Data from `system_queue_job` table.
+
+    ## Check original data in the source table & archieve table.
+        Current Source  : 67,274,703
+        Current Archive : 12,012,391
+
+    ## Test Configuration :
+
+        $result = $archiver
+                ->backupFrom('system_queue_job')
+                ->primaryKey('id')
+                ->whereClause("DATE(created_at) <= '2023-09-15'")
+                ->mode('BP')
+                ->chunk('50000')
+                ->onDebug()
+                ->run();
+
+    ## Test Data :
+
+        2023-09-15      79554
+        2023-09-14      89768
+        2023-09-13      65177
+        2023-09-12      36581
+        2023-09-11      92374
+        2023-09-10      82127
+        2023-09-09      113512
+        2023-09-08      51177
+        2023-09-07      20350
+        2023-09-06      53221
+        2023-09-05      60055
+        2023-09-04      120612
+        2023-09-03      27891
+        2023-09-02      132624
+        2023-09-01      59443
+        2023-08-31      129346
+        2023-08-30      73399
+        2023-08-29      83956
+        2023-08-28      54584
+        2023-08-27      126052
+        2023-08-26      71506
+        2023-08-25      84375
+        2023-08-24      62356
+        2023-08-23      38658
+        2023-08-22      111222
+        2023-08-21      45135
+        2023-08-20      122010
+        2023-08-19      79641
+        2023-08-18      137177
+        2023-08-17      51960
+        2023-08-16      78273
+        2023-08-15      90482
+        2023-08-14      72592
+
+    ## Expected Result :-
+        Backup : 2,597,190
+        Purge : 2,597,190
+
+    ## Actual Result :-
+
+        {
+            "status": "completed",
+            "mode": "BP",
+            "table": "system_queue_job",
+            "backup_table": "system_queue_job_ARC",
+            "total": 2597190,
+            "processed": {
+                "backup": 2597190,
+                "purge": 2597190
+            },
+            "messages": "Records processed successfully",
+            "execution_date": "2025-03-01 11:07:16",
+            "execution_time": "01:55:16.326",
+            "threads": 1,
+            "memory": {
+                "initial": "10 MB",
+                "final": "10 MB",
+                "peak": "10 MB",
+                "used": "0 B"
+            }
+        }
+
+    ## Verify Data After Running Test :
+        Current Source  : 64,677,513
+        Current Archive : 14,609,581
+
+    ## Log File : 2025-03-01_TC02.log
+
+    ## Result : PASSED ✅
+
+====================================================================================================

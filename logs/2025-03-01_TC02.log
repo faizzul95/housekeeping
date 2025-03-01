@@ -1,0 +1,891 @@
+[2025-03-01 09:12:00] [INFO] [PID:main] Starting backup process at : 2025-03-01 09:12:00
+[2025-03-01 09:12:00] [DEBUG] [PID:main] Prepare archive table 'system_queue_job_ARC' with execution time: 00:00:00.004
+[2025-03-01 09:12:00] [DEBUG] [PID:main] Running range query: 
+
+                SELECT MIN(id) as min_id, MAX(id) as max_id, COUNT(*) as total_count
+                FROM system_queue_job
+                WHERE DATE(created_at) <= '2023-09-15'
+            
+[2025-03-01 09:12:50] [DEBUG] [PID:main] Found 2597190 records in range [70261140 - 72858329] in table 'system_queue_job'
+[2025-03-01 09:12:50] [DEBUG] [PID:main] Primary key range determined for table 'system_queue_job':
+- Column: id
+- Min: 70261140
+- Max: 72858329
+- Count: 2597190
+- Execution Time: 00:00:50.115
+[2025-03-01 09:12:50] [DEBUG] [PID:main] Chunk size optimization: Suggested=50000, Current=50000
+[2025-03-01 09:12:50] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:13:55] [DEBUG] [PID:main] Backed up 50000 records from range 70261140-70311139
+[2025-03-01 09:13:55] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:14:59] [DEBUG] [PID:main] Purged 50000 records from range 70261140-70311139
+[2025-03-01 09:14:59] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:15:58] [DEBUG] [PID:main] Backed up 50000 records from range 70311140-70361139
+[2025-03-01 09:15:58] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:16:58] [DEBUG] [PID:main] Purged 50000 records from range 70311140-70361139
+[2025-03-01 09:16:58] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:17:57] [DEBUG] [PID:main] Backed up 50000 records from range 70361140-70411139
+[2025-03-01 09:17:57] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:18:57] [DEBUG] [PID:main] Purged 50000 records from range 70361140-70411139
+[2025-03-01 09:18:57] [INFO] [PID:main] Processing progress: 5% complete (150000/2597190 IDs)
+[2025-03-01 09:18:57] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:19:55] [DEBUG] [PID:main] Backed up 50000 records from range 70411140-70461139
+[2025-03-01 09:19:55] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:20:56] [DEBUG] [PID:main] Purged 50000 records from range 70411140-70461139
+[2025-03-01 09:20:56] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:21:53] [DEBUG] [PID:main] Backed up 50000 records from range 70461140-70511139
+[2025-03-01 09:21:53] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:22:54] [DEBUG] [PID:main] Purged 50000 records from range 70461140-70511139
+[2025-03-01 09:22:54] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:23:56] [DEBUG] [PID:main] Backed up 50000 records from range 70511140-70561139
+[2025-03-01 09:23:56] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:24:57] [DEBUG] [PID:main] Purged 50000 records from range 70511140-70561139
+[2025-03-01 09:24:57] [INFO] [PID:main] Processing progress: 11% complete (300000/2597190 IDs)
+[2025-03-01 09:24:57] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:25:57] [DEBUG] [PID:main] Backed up 50000 records from range 70561140-70611139
+[2025-03-01 09:25:57] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:26:56] [DEBUG] [PID:main] Purged 50000 records from range 70561140-70611139
+[2025-03-01 09:26:56] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:27:58] [DEBUG] [PID:main] Backed up 50000 records from range 70611140-70661139
+[2025-03-01 09:27:58] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:29:00] [DEBUG] [PID:main] Purged 50000 records from range 70611140-70661139
+[2025-03-01 09:29:00] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:29:59] [DEBUG] [PID:main] Backed up 50000 records from range 70661140-70711139
+[2025-03-01 09:29:59] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:31:01] [DEBUG] [PID:main] Purged 50000 records from range 70661140-70711139
+[2025-03-01 09:31:01] [INFO] [PID:main] Processing progress: 17% complete (450000/2597190 IDs)
+[2025-03-01 09:31:01] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:32:01] [DEBUG] [PID:main] Backed up 50000 records from range 70711140-70761139
+[2025-03-01 09:32:01] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:33:04] [DEBUG] [PID:main] Purged 50000 records from range 70711140-70761139
+[2025-03-01 09:33:04] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:34:05] [DEBUG] [PID:main] Backed up 50000 records from range 70761140-70811139
+[2025-03-01 09:34:05] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:35:06] [DEBUG] [PID:main] Purged 50000 records from range 70761140-70811139
+[2025-03-01 09:35:06] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:36:07] [DEBUG] [PID:main] Backed up 50000 records from range 70811140-70861139
+[2025-03-01 09:36:07] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:37:13] [DEBUG] [PID:main] Purged 50000 records from range 70811140-70861139
+[2025-03-01 09:37:13] [INFO] [PID:main] Processing progress: 23% complete (600000/2597190 IDs)
+[2025-03-01 09:37:13] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:38:14] [DEBUG] [PID:main] Backed up 50000 records from range 70861140-70911139
+[2025-03-01 09:38:14] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:39:20] [DEBUG] [PID:main] Purged 50000 records from range 70861140-70911139
+[2025-03-01 09:39:20] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:40:22] [DEBUG] [PID:main] Backed up 50000 records from range 70911140-70961139
+[2025-03-01 09:40:22] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:41:26] [DEBUG] [PID:main] Purged 50000 records from range 70911140-70961139
+[2025-03-01 09:41:26] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:42:28] [DEBUG] [PID:main] Backed up 50000 records from range 70961140-71011139
+[2025-03-01 09:42:28] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:43:33] [DEBUG] [PID:main] Purged 50000 records from range 70961140-71011139
+[2025-03-01 09:43:33] [INFO] [PID:main] Processing progress: 28% complete (750000/2597190 IDs)
+[2025-03-01 09:43:33] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:44:34] [DEBUG] [PID:main] Backed up 50000 records from range 71011140-71061139
+[2025-03-01 09:44:34] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:45:37] [DEBUG] [PID:main] Purged 50000 records from range 71011140-71061139
+[2025-03-01 09:45:37] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:46:40] [DEBUG] [PID:main] Backed up 50000 records from range 71061140-71111139
+[2025-03-01 09:46:40] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:47:43] [DEBUG] [PID:main] Purged 50000 records from range 71061140-71111139
+[2025-03-01 09:47:43] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:48:47] [DEBUG] [PID:main] Backed up 50000 records from range 71111140-71161139
+[2025-03-01 09:48:47] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:49:53] [DEBUG] [PID:main] Purged 50000 records from range 71111140-71161139
+[2025-03-01 09:49:53] [INFO] [PID:main] Processing progress: 34% complete (900000/2597190 IDs)
+[2025-03-01 09:49:53] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:50:56] [DEBUG] [PID:main] Backed up 50000 records from range 71161140-71211139
+[2025-03-01 09:50:56] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:52:05] [DEBUG] [PID:main] Purged 50000 records from range 71161140-71211139
+[2025-03-01 09:52:05] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:53:06] [DEBUG] [PID:main] Backed up 50000 records from range 71211140-71261139
+[2025-03-01 09:53:06] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:54:12] [DEBUG] [PID:main] Purged 50000 records from range 71211140-71261139
+[2025-03-01 09:54:12] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:55:16] [DEBUG] [PID:main] Backed up 50000 records from range 71261140-71311139
+[2025-03-01 09:55:16] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:56:21] [DEBUG] [PID:main] Purged 50000 records from range 71261140-71311139
+[2025-03-01 09:56:21] [INFO] [PID:main] Processing progress: 40% complete (1050000/2597190 IDs)
+[2025-03-01 09:56:21] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:57:23] [DEBUG] [PID:main] Backed up 50000 records from range 71311140-71361139
+[2025-03-01 09:57:23] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:58:29] [DEBUG] [PID:main] Purged 50000 records from range 71311140-71361139
+[2025-03-01 09:58:29] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 09:59:43] [DEBUG] [PID:main] Backed up 50000 records from range 71361140-71411139
+[2025-03-01 09:59:43] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:00:51] [DEBUG] [PID:main] Purged 50000 records from range 71361140-71411139
+[2025-03-01 10:00:51] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:01:57] [DEBUG] [PID:main] Backed up 50000 records from range 71411140-71461139
+[2025-03-01 10:01:57] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:03:03] [DEBUG] [PID:main] Purged 50000 records from range 71411140-71461139
+[2025-03-01 10:03:03] [INFO] [PID:main] Processing progress: 46% complete (1200000/2597190 IDs)
+[2025-03-01 10:03:03] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:04:06] [DEBUG] [PID:main] Backed up 50000 records from range 71461140-71511139
+[2025-03-01 10:04:06] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:05:13] [DEBUG] [PID:main] Purged 50000 records from range 71461140-71511139
+[2025-03-01 10:05:13] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:06:20] [DEBUG] [PID:main] Backed up 50000 records from range 71511140-71561139
+[2025-03-01 10:06:20] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:07:26] [DEBUG] [PID:main] Purged 50000 records from range 71511140-71561139
+[2025-03-01 10:07:26] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:08:37] [DEBUG] [PID:main] Backed up 50000 records from range 71561140-71611139
+[2025-03-01 10:08:37] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:09:42] [DEBUG] [PID:main] Purged 50000 records from range 71561140-71611139
+[2025-03-01 10:09:42] [INFO] [PID:main] Processing progress: 51% complete (1350000/2597190 IDs)
+[2025-03-01 10:09:42] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:10:49] [DEBUG] [PID:main] Backed up 50000 records from range 71611140-71661139
+[2025-03-01 10:10:49] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:11:54] [DEBUG] [PID:main] Purged 50000 records from range 71611140-71661139
+[2025-03-01 10:11:54] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:13:00] [DEBUG] [PID:main] Backed up 50000 records from range 71661140-71711139
+[2025-03-01 10:13:00] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:14:10] [DEBUG] [PID:main] Purged 50000 records from range 71661140-71711139
+[2025-03-01 10:14:10] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:15:20] [DEBUG] [PID:main] Backed up 50000 records from range 71711140-71761139
+[2025-03-01 10:15:20] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:16:27] [DEBUG] [PID:main] Purged 50000 records from range 71711140-71761139
+[2025-03-01 10:16:27] [INFO] [PID:main] Processing progress: 57% complete (1500000/2597190 IDs)
+[2025-03-01 10:16:27] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:17:33] [DEBUG] [PID:main] Backed up 50000 records from range 71761140-71811139
+[2025-03-01 10:17:33] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:18:40] [DEBUG] [PID:main] Purged 50000 records from range 71761140-71811139
+[2025-03-01 10:18:40] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:19:46] [DEBUG] [PID:main] Backed up 50000 records from range 71811140-71861139
+[2025-03-01 10:19:46] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:20:53] [DEBUG] [PID:main] Purged 50000 records from range 71811140-71861139
+[2025-03-01 10:20:53] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:22:00] [DEBUG] [PID:main] Backed up 50000 records from range 71861140-71911139
+[2025-03-01 10:22:00] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:23:07] [DEBUG] [PID:main] Purged 50000 records from range 71861140-71911139
+[2025-03-01 10:23:07] [INFO] [PID:main] Processing progress: 63% complete (1650000/2597190 IDs)
+[2025-03-01 10:23:07] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:24:15] [DEBUG] [PID:main] Backed up 50000 records from range 71911140-71961139
+[2025-03-01 10:24:15] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:25:23] [DEBUG] [PID:main] Purged 50000 records from range 71911140-71961139
+[2025-03-01 10:25:23] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:26:30] [DEBUG] [PID:main] Backed up 50000 records from range 71961140-72011139
+[2025-03-01 10:26:30] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:27:39] [DEBUG] [PID:main] Purged 50000 records from range 71961140-72011139
+[2025-03-01 10:27:39] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:28:47] [DEBUG] [PID:main] Backed up 50000 records from range 72011140-72061139
+[2025-03-01 10:28:47] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:29:56] [DEBUG] [PID:main] Purged 50000 records from range 72011140-72061139
+[2025-03-01 10:29:56] [INFO] [PID:main] Processing progress: 69% complete (1800000/2597190 IDs)
+[2025-03-01 10:29:56] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:31:02] [DEBUG] [PID:main] Backed up 50000 records from range 72061140-72111139
+[2025-03-01 10:31:02] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:32:11] [DEBUG] [PID:main] Purged 50000 records from range 72061140-72111139
+[2025-03-01 10:32:11] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:33:19] [DEBUG] [PID:main] Backed up 50000 records from range 72111140-72161139
+[2025-03-01 10:33:19] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:34:26] [DEBUG] [PID:main] Purged 50000 records from range 72111140-72161139
+[2025-03-01 10:34:26] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:35:35] [DEBUG] [PID:main] Backed up 50000 records from range 72161140-72211139
+[2025-03-01 10:35:35] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:36:43] [DEBUG] [PID:main] Purged 50000 records from range 72161140-72211139
+[2025-03-01 10:36:43] [INFO] [PID:main] Processing progress: 75% complete (1950000/2597190 IDs)
+[2025-03-01 10:36:43] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:37:53] [DEBUG] [PID:main] Backed up 50000 records from range 72211140-72261139
+[2025-03-01 10:37:53] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:39:03] [DEBUG] [PID:main] Purged 50000 records from range 72211140-72261139
+[2025-03-01 10:39:03] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:40:15] [DEBUG] [PID:main] Backed up 50000 records from range 72261140-72311139
+[2025-03-01 10:40:15] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:41:26] [DEBUG] [PID:main] Purged 50000 records from range 72261140-72311139
+[2025-03-01 10:41:26] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:42:33] [DEBUG] [PID:main] Backed up 50000 records from range 72311140-72361139
+[2025-03-01 10:42:33] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:43:44] [DEBUG] [PID:main] Purged 50000 records from range 72311140-72361139
+[2025-03-01 10:43:44] [INFO] [PID:main] Processing progress: 80% complete (2100000/2597190 IDs)
+[2025-03-01 10:43:44] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:44:55] [DEBUG] [PID:main] Backed up 50000 records from range 72361140-72411139
+[2025-03-01 10:44:55] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:46:06] [DEBUG] [PID:main] Purged 50000 records from range 72361140-72411139
+[2025-03-01 10:46:06] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:47:14] [DEBUG] [PID:main] Backed up 50000 records from range 72411140-72461139
+[2025-03-01 10:47:14] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:48:23] [DEBUG] [PID:main] Purged 50000 records from range 72411140-72461139
+[2025-03-01 10:48:23] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:49:32] [DEBUG] [PID:main] Backed up 50000 records from range 72461140-72511139
+[2025-03-01 10:49:32] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:50:43] [DEBUG] [PID:main] Purged 50000 records from range 72461140-72511139
+[2025-03-01 10:50:43] [INFO] [PID:main] Processing progress: 86% complete (2250000/2597190 IDs)
+[2025-03-01 10:50:43] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:51:53] [DEBUG] [PID:main] Backed up 50000 records from range 72511140-72561139
+[2025-03-01 10:51:53] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:53:05] [DEBUG] [PID:main] Purged 50000 records from range 72511140-72561139
+[2025-03-01 10:53:05] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:54:14] [DEBUG] [PID:main] Backed up 50000 records from range 72561140-72611139
+[2025-03-01 10:54:14] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:55:24] [DEBUG] [PID:main] Purged 50000 records from range 72561140-72611139
+[2025-03-01 10:55:24] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:56:35] [DEBUG] [PID:main] Backed up 50000 records from range 72611140-72661139
+[2025-03-01 10:56:35] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:57:46] [DEBUG] [PID:main] Purged 50000 records from range 72611140-72661139
+[2025-03-01 10:57:46] [INFO] [PID:main] Processing progress: 92% complete (2400000/2597190 IDs)
+[2025-03-01 10:57:46] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 10:58:56] [DEBUG] [PID:main] Backed up 50000 records from range 72661140-72711139
+[2025-03-01 10:58:56] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 11:00:08] [DEBUG] [PID:main] Purged 50000 records from range 72661140-72711139
+[2025-03-01 11:00:08] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 11:01:19] [DEBUG] [PID:main] Backed up 50000 records from range 72711140-72761139
+[2025-03-01 11:01:19] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 11:02:30] [DEBUG] [PID:main] Purged 50000 records from range 72711140-72761139
+[2025-03-01 11:02:30] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 11:03:41] [DEBUG] [PID:main] Backed up 50000 records from range 72761140-72811139
+[2025-03-01 11:03:41] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 11:04:54] [DEBUG] [PID:main] Purged 50000 records from range 72761140-72811139
+[2025-03-01 11:04:54] [INFO] [PID:main] Processing progress: 98% complete (2550000/2597190 IDs)
+[2025-03-01 11:04:54] [DEBUG] [PID:main] Running backup query: 
+INSERT INTO system_queue_job_ARC 
+                SELECT  o.* 
+                FROM system_queue_job o 
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND NOT EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 11:06:05] [DEBUG] [PID:main] Backed up 47190 records from range 72811140-72858329
+[2025-03-01 11:06:05] [DEBUG] [PID:main] Running purge query: 
+DELETE FROM system_queue_job o
+                WHERE id BETWEEN :0 AND :1
+                AND (DATE(created_at) <= '2023-09-15')
+                 AND EXISTS (
+            SELECT 1 FROM system_queue_job_ARC arc WHERE arc.id = o.id)
+[2025-03-01 11:07:16] [DEBUG] [PID:main] Purged 47190 records from range 72811140-72858329
+[2025-03-01 11:07:16] [DEBUG] [PID:main] Memory optimization: Used 0.20% of limit. Garbage collection freed 0 references in cleanup.
+[2025-03-01 11:07:16] [INFO] [PID:main] Ended backup process at : 2025-03-01 11:07:16
+
+[2025-03-01 11:07:16] [INFO] [PID:main] Result : 
+
+{
+    "status": "completed",
+    "mode": "BP",
+    "table": "system_queue_job",
+    "backup_table": "system_queue_job_ARC",
+    "total": 2597190,
+    "processed": {
+        "backup": 2597190,
+        "purge": 2597190
+    },
+    "messages": "Records processed successfully",
+    "execution_date": "2025-03-01 11:07:16",
+    "execution_time": "01:55:16.326",
+    "threads": 1,
+    "memory": {
+        "initial": "10 MB",
+        "final": "10 MB",
+        "peak": "10 MB",
+        "used": "0 B"
+    }
+}
