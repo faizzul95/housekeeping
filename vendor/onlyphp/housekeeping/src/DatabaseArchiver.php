@@ -469,7 +469,6 @@ class DatabaseArchiver
             && function_exists('posix_getpid');
     }
 
-
     private function performGarbageCollection($context = '', $forceCleanup = false)
     {
         // Check current memory usage
@@ -477,9 +476,21 @@ class DatabaseArchiver
         $memoryLimit = $this->config->getMemoryLimit();
         $memoryPercent = ($memoryUsage / $memoryLimit) * 100;
 
-        // Force garbage collection if memory usage is above 70%
-        if (($memoryPercent > 70 || $forceCleanup) && function_exists('gc_collect_cycles')) {
+        // Lower threshold to 60% for earlier garbage collection
+        if (($memoryPercent > 60 || $forceCleanup) && function_exists('gc_collect_cycles')) {
+            // Disable garbage collection temporarily to avoid recursive calls
+            gc_disable();
+
+            // Clear various caches
+            if (function_exists('opcache_reset') && ini_get('opcache.enable')) {
+                @opcache_reset();
+            }
+
+            // Force immediate collection
             $collected = gc_collect_cycles();
+
+            // Re-enable garbage collection
+            gc_enable();
 
             if ($this->config->isDebug()) {
                 $this->logMessage(
@@ -494,7 +505,6 @@ class DatabaseArchiver
             }
 
             unset($collected);
-
             return true;
         }
 
@@ -505,12 +515,22 @@ class DatabaseArchiver
     {
         $this->config->setPrimaryKeyRange(null);
 
+        // Ensure logger resources are properly released
+        if (isset($this->logger)) {
+            $this->logger->rotateLogIfNeeded();
+        }
+
         // Clear operation references to free memory
         $this->backupOperation = null;
         $this->purgeOperation = null;
         $this->tableOperation = null;
+        $this->logger = null;
 
         $this->performGarbageCollection("in cleanup", true);
-        $this->logger->rotateLogIfNeeded();
+
+        // Suggest PHP to release memory
+        if (function_exists('gc_mem_caches')) {
+            gc_mem_caches();
+        }
     }
 }
